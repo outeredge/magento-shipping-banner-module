@@ -1,0 +1,1 @@
+# magento-shipping-banner-module

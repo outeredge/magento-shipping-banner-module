@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @author    MageMontreal <support@MageMontreal.com>
+ * @copyright 2021 MageMontreal. All Rights Reserved.
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <outeredge_freeshippingpromo>
+            <general>
+                <enable>1</enable>
+            </general>
+            <message>
+                <free_shipping_threshold_amount>30</free_shipping_threshold_amount>
+                <message_default>FREE Shipping on orders over £30!</message_default>
+                <message_items_in_cart>You are XX.XX away from FREE shipping!</message_items_in_cart>
+                <message_free_shipping>Your order now has FREE shipping!</message_free_shipping>
+            </message>
+        </outeredge_freeshippingpromo>
+    </default>
+</config>

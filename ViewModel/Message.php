@@ -1,8 +1,5 @@
 <?php
-/**
- * @author    Outer/Edge
- * @copyright Copyright (c) 2023 outer/edge
- */
+
 namespace OuterEdge\FreeShippingPromo\ViewModel;
 
 use Magento\Framework\View\Element\Block\ArgumentInterface;

@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="top-message-bar">
+            <block name="free.shipping.banner" template="OuterEdge_FreeShippingPromo::free-shipping-banner.phtml" before="-">
+                <arguments>
+                    <argument name="message_view_model" xsi:type="object">OuterEdge\FreeShippingPromo\ViewModel\Message</argument>
+                    <argument name="jsRoute" xsi:type="string">OuterEdge_FreeShippingPromo/js/breeze/free-shipping-banner</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+        <referenceContainer name="minicart.addons">
+        <block name="free.shipping.minicart.banner" template="OuterEdge_FreeShippingPromo::free-shipping-banner.phtml" before="-">
+                <arguments>
+                    <argument name="message_view_model" xsi:type="object">OuterEdge\FreeShippingPromo\ViewModel\Message</argument>
+                    <argument name="jsRoute" xsi:type="string">OuterEdge_FreeShippingPromo/js/breeze/free-shipping-banner</argument>
+                </arguments>
+            </block>
+        </referenceContainer>
+       <referenceBlock name="breeze.js">
+            <arguments>
+                <argument name="bundles" xsi:type="array">
+                    <item name="default" xsi:type="array">
+                        <item name="items" xsi:type="array">
+                            <item name="OuterEdge_FreeShippingPromo/js/component" xsi:type="string">OuterEdge_FreeShippingPromo/js/breeze/free-shipping-banner</item>
+                        </item>
+                    </item>
+                </argument>
+            </arguments>
+        </referenceBlock>
+    </body>
+</page>

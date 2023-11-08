@@ -1,0 +1,27 @@
+<?php
+/* @var $block Magento\Framework\View\Element\Template */
+/* @var $messageViewModel \OuterEdge\FreeShippingPromo\ViewModel\Message */
+
+$messageViewModel = $block->getData('message_view_model');
+$jsRoute = $block->getData('jsRoute');
+?>
+<?php if ($messageViewModel->getIsEnabled()): ?>
+    <div id="free-shipping-banner" class="free-shipping-banner" data-bind="scope: 'free-shipping-banner-component'">
+        <!--ko template: getTemplate() --><!-- /ko -->
+    </div>
+    <script type="text/x-magento-init">
+        {
+            "#free-shipping-banner": {
+                "Magento_Ui/js/core/app": {
+                    "components": {
+                        "free-shipping-banner-component": {
+                            "component": "<?= $jsRoute ?>",
+                            "config": <?= $messageViewModel->getConfig() ?>
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+<?php endif; ?>
+

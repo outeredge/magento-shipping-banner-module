@@ -14,12 +14,20 @@
             "role": "Developer"
         }
     ],
+    "require-dev": {
+        "outeredge/dev-dependencies": "^3.0"
+    },
     "autoload": {
         "files": [
             "registration.php"
         ],
         "psr-4": {
             "OuterEdge\\FreeShippingPromo\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "phpstan/extension-installer": true
         }
     }
 }

@@ -7,7 +7,9 @@ $jsRoute = $block->getData('jsRoute');
 ?>
 <?php if ($messageViewModel->getIsEnabled()): ?>
     <div id="free-shipping-banner" class="free-shipping-banner" data-bind="scope: 'free-shipping-banner-component'">
-        <!--ko template: getTemplate() --><!-- /ko -->
+        <!--ko template: getTemplate() -->
+            <span><?= $messageViewModel->getDefaultMessage() ?></span>
+        <!-- /ko -->
     </div>
     <script type="text/x-magento-init">
         {

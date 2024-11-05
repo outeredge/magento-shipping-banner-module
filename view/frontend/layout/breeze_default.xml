@@ -22,7 +22,10 @@
                 <argument name="bundles" xsi:type="array">
                     <item name="default" xsi:type="array">
                         <item name="items" xsi:type="array">
-                            <item name="OuterEdge_FreeShippingPromo/js/component" xsi:type="string">OuterEdge_FreeShippingPromo/js/breeze/free-shipping-banner</item>
+                            <item name="OuterEdge_FreeShippingPromo/js/component" xsi:type="array">
+                                <item name="path" xsi:type="string">OuterEdge_FreeShippingPromo/js/breeze/free-shipping-banner</item>
+                                <item name="autoload" xsi:type="boolean">true</item>
+                            </item>
                         </item>
                     </item>
                 </argument>

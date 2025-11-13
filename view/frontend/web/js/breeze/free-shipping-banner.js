@@ -17,14 +17,17 @@ define([
         },
         initialize: function () {
             this._super();
+            
             const self = this;
             const cart = $.sections.get('cart');
-            self.subtotal = cart().subtotalAmount;
+            
+            // Calculate subtotal with tax from cart items
+            self.subtotal = self.calculateSubtotalWithTax(cart());
 
-            $.sections.get('cart').subscribe(function (cart) {
-                if (!_.isElement(cart) && !_.isUndefined(cart.subtotalAmount)) {
-                    // Update the subtotal and message when the cart changes.
-                    self.subtotal = parseFloat(cart.subtotalAmount);
+            $.sections.get('cart').subscribe(function (cartData) {
+                if (!_.isElement(cartData) && cartData.items && cartData.items.length > 0) {
+                    // Calculate subtotal with tax from cart items
+                    self.subtotal = self.calculateSubtotalWithTax(cartData);
                     self.updateMessage();
                 }
             });
@@ -40,12 +43,13 @@ define([
                 // Calculate remaining amount for free shipping and set the message class and text.
                 const subtotalRemaining = this.freeShippingThreshold - this.subtotal;
                 const formattedSubtotalRemaining = this.formatCurrency(subtotalRemaining);
-                const message = this.messageItemsInCart.replace('XX.XX', formattedSubtotalRemaining)
+                const message = this.messageItemsInCart.replace('XX.XX', formattedSubtotalRemaining);
                 this.setMessage('less-than-amount', message);
             } else if (this.subtotal >= this.freeShippingThreshold) {
                 // Set the message to 'free-shipping' when subtotal meets or exceeds the threshold.
                 this.setMessage('free-shipping', this.messageFreeShipping);
             }
+            
             this.renderHTML();
         },
         setMessage: function (messageClass, messageText) {
@@ -56,6 +60,21 @@ define([
             const html = `<div><span class="${this.messageClass}">${this.messageText}</span></div>`;
             this.element.html(html);
         },
+        calculateSubtotalWithTax: function (cartData) {
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                return 0;
+            }
+            
+            let total = 0;
+            cartData.items.forEach(function(item) {
+                // product_price_value contains the price including tax
+                const itemPrice = parseFloat(item.product_price_value || 0);
+                const itemQty = parseInt(item.qty || 0);
+                total += itemPrice * itemQty;
+            });
+            
+            return total;
+        },
         formatCurrency: function (value) {
             let priceFormat = {
                 decimalSymbol: '.',
@@ -65,6 +84,7 @@ define([
                 precision: 2,
                 requiredPrecision: 2
             };
+            
             return $.catalog.priceUtils.formatPriceLocale(value, priceFormat, false);
         }
     });

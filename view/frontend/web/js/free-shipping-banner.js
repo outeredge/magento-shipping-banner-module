@@ -23,14 +23,14 @@ define([
             var cart = customerData.get('cart');
 
             customerData.getInitCustomerData().done(function () {
-                if (!_.isElement(cart()) && !_.isUndefined(cart().subtotalAmount)) {
-                    self.subtotal = parseFloat(cart().subtotalAmount);
+                if (!_.isElement(cart())) {
+                    self.subtotal = self.calculateSubtotalWithTax(cart());
                 }
             });
 
-            cart.subscribe(function (cart) {
-                if (!_.isElement(cart) && !_.isUndefined(cart.subtotalAmount)) {
-                    self.subtotal = parseFloat(cart.subtotalAmount);
+            cart.subscribe(function (cartData) {
+                if (!_.isElement(cartData) && cartData.items && cartData.items.length > 0) {
+                    self.subtotal = self.calculateSubtotalWithTax(cartData);
                 }
             });
 
@@ -52,6 +52,21 @@ define([
                     return self.messageFreeShipping;
                 }
             });
+        },
+        calculateSubtotalWithTax: function (cartData) {
+            if (!cartData || !cartData.items || cartData.items.length === 0) {
+                return 0;
+            }
+            
+            var total = 0;
+            cartData.items.forEach(function(item) {
+                // product_price_value contains the price including tax
+                var itemPrice = parseFloat(item.product_price_value || 0);
+                var itemQty = parseInt(item.qty || 0);
+                total += itemPrice * itemQty;
+            });
+            
+            return total;
         },
         formatCurrency: function (value) {
             let priceFormat = {

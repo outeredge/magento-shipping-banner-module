@@ -1,7 +1,9 @@
 define([
     'uiComponent',
     'underscore',
-], function (Component, _) {
+    'Magento_Catalog/js/price-utils',
+    'jquery'
+], function (Component, _, priceUtils, $) {
     'use strict';
 
     return Component.extend({
@@ -17,10 +19,10 @@ define([
         },
         initialize: function () {
             this._super();
-            
+
             const self = this;
             const cart = $.sections.get('cart');
-            
+
             // Calculate subtotal with tax from cart items
             self.subtotal = self.calculateSubtotalWithTax(cart());
 
@@ -49,7 +51,7 @@ define([
                 // Set the message to 'free-shipping' when subtotal meets or exceeds the threshold.
                 this.setMessage('free-shipping', this.messageFreeShipping);
             }
-            
+
             this.renderHTML();
         },
         setMessage: function (messageClass, messageText) {
@@ -58,13 +60,17 @@ define([
         },
         renderHTML: function () {
             const html = `<div><span class="${this.messageClass}">${this.messageText}</span></div>`;
-            this.element.html(html);
+            if (this.element) {
+                this.element.html(html);
+            } else {
+                $('#free-shipping-banner').html(html);
+            }
         },
         calculateSubtotalWithTax: function (cartData) {
             if (!cartData || !cartData.items || cartData.items.length === 0) {
                 return 0;
             }
-            
+
             let total = 0;
             cartData.items.forEach(function(item) {
                 // product_price_value contains the price including tax
@@ -72,7 +78,7 @@ define([
                 const itemQty = parseInt(item.qty || 0);
                 total += itemPrice * itemQty;
             });
-            
+
             return total;
         },
         formatCurrency: function (value) {
@@ -84,8 +90,8 @@ define([
                 precision: 2,
                 requiredPrecision: 2
             };
-            
-            return $.catalog.priceUtils.formatPriceLocale(value, priceFormat, false);
+
+            return priceUtils.formatPriceLocale(value, priceFormat, false);
         }
     });
 });

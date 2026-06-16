@@ -4,21 +4,27 @@
 
 $messageViewModel = $block->getData('message_view_model');
 $jsRoute = $block->getData('jsRoute');
+$uniqueId = uniqid('free-shipping-banner-');
+$config = json_decode($messageViewModel->getConfig(), true) ?: [];
+$additionalConfig = $block->getData('additional_config') ?: [];
+$bannerConfig = array_replace($config, (array) $additionalConfig);
+$cssClass = $block->getData('additional_css_class') ?: '';
+$isHidden = (bool) $block->getData('is_hidden');
 ?>
 <?php if ($messageViewModel->getIsEnabled()): ?>
-    <div id="free-shipping-banner" class="free-shipping-banner" data-bind="scope: 'free-shipping-banner-component'">
+    <div id="<?= $block->escapeHtmlAttr($uniqueId) ?>" class="free-shipping-banner <?= $block->escapeHtmlAttr($cssClass) ?>" data-bind="scope: '<?= $block->escapeHtmlAttr($uniqueId) ?>-component'"<?php if ($isHidden): ?> style="display: none;"<?php endif; ?>>
         <!--ko template: getTemplate() -->
             <span><?= $messageViewModel->getDefaultMessage() ?></span>
         <!-- /ko -->
     </div>
     <script type="text/x-magento-init">
-        {
-            "#free-shipping-banner": {
+         {
+            "#<?= $block->escapeJs($uniqueId) ?>": {
                 "Magento_Ui/js/core/app": {
                     "components": {
-                        "free-shipping-banner-component": {
-                            "component": "<?= $jsRoute ?>",
-                            "config": <?= $messageViewModel->getConfig() ?>
+                        "<?= $block->escapeJs($uniqueId) ?>-component": {
+                            "component": "<?= $block->escapeJs($jsRoute) ?>",
+                            "config": <?= json_encode($bannerConfig, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP) ?>
                         }
                     }
                 }
@@ -26,4 +32,3 @@ $jsRoute = $block->getData('jsRoute');
         }
     </script>
 <?php endif; ?>
-

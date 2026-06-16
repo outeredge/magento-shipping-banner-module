@@ -109,7 +109,7 @@ define([
 
             var $message = $target.find('[data-free-shipping-promo-message]').first();
             if ($message.length === 0) {
-                $target.html('<p style="font-size: 12pt;"><strong data-free-shipping-promo-message></strong></p>');
+                $target.html('<p><strong data-free-shipping-promo-message></strong></p>');
                 $message = $target.find('[data-free-shipping-promo-message]').first();
             }
 

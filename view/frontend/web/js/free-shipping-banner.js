@@ -1,10 +1,11 @@
 define([
+    'jquery',
     'uiComponent',
     'Magento_Customer/js/customer-data',
     'underscore',
     'knockout',
     'Magento_Catalog/js/price-utils'
-], function(Component, customerData, _, ko, priceUtils) {
+], function($, Component, customerData, _, ko, priceUtils) {
     'use strict';
 
     return Component.extend({
@@ -29,27 +30,35 @@ define([
             });
 
             cart.subscribe(function (cartData) {
-                if (!_.isElement(cartData) && cartData.items && cartData.items.length > 0) {
+                if (!_.isElement(cartData)) {
                     self.subtotal = self.calculateSubtotalWithTax(cartData);
                 }
             });
 
             self.message = ko.computed(function () {
+                var message;
+
                 if (_.isUndefined(self.subtotal) || self.subtotal === 0) {
                     self.messageClass = 'default';
-                    return self.messageDefault;
+                    message = self.messageDefault;
+                    self.updateTargetMessage(message);
+                    return message;
                 }
 
                 if (self.subtotal > 0 && self.subtotal < self.freeShippingThreshold) {
                     self.messageClass = 'less-than-amount';
                     var subtotalRemaining = self.freeShippingThreshold - self.subtotal;
                     var formattedSubtotalRemaining = self.formatCurrency(subtotalRemaining);
-                    return self.messageItemsInCart.replace('XX.XX', formattedSubtotalRemaining);
+                    message = self.messageItemsInCart.replace('XX.XX', formattedSubtotalRemaining);
+                    self.updateTargetMessage(message);
+                    return message;
                 }
 
                 if (self.subtotal >= self.freeShippingThreshold) {
                     self.messageClass = 'free-shipping';
-                    return self.messageFreeShipping;
+                    message = self.messageFreeShipping;
+                    self.updateTargetMessage(message);
+                    return message;
                 }
             });
         },
@@ -60,9 +69,18 @@ define([
             
             var total = 0;
             cartData.items.forEach(function(item) {
-                // product_price_value contains the price including tax
-                var itemPrice = parseFloat(item.product_price_value || 0);
-                var itemQty = parseInt(item.qty || 0);
+                var rawPrice = item.product_price_value || 0;
+                var itemPrice = 0;
+                if (typeof rawPrice === 'object') {
+                    if (rawPrice.incl_tax !== undefined) {
+                        itemPrice = parseFloat(rawPrice.incl_tax) || 0;
+                    } else if (rawPrice.excl_tax !== undefined) {
+                        itemPrice = parseFloat(rawPrice.excl_tax) || 0;
+                    }
+                } else {
+                    itemPrice = parseFloat(rawPrice) || 0;
+                }
+                var itemQty = parseInt(item.qty || 0, 10);
                 total += itemPrice * itemQty;
             });
             
@@ -78,6 +96,24 @@ define([
                 requiredPrecision: 2
             };
             return priceUtils.formatPriceLocale(value, priceFormat, false);
+        },
+        updateTargetMessage: function (message) {
+            if (!this.targetSelector || !message) {
+                return;
+            }
+
+            var $target = $(this.targetSelector).first();
+            if ($target.length === 0) {
+                return;
+            }
+
+            var $message = $target.find('[data-free-shipping-promo-message]').first();
+            if ($message.length === 0) {
+                $target.html('<p><strong data-free-shipping-promo-message></strong></p>');
+                $message = $target.find('[data-free-shipping-promo-message]').first();
+            }
+
+            $message.text(message);
         }
     });
 });
